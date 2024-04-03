@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <script>
+            function fetchJSONData() {
+                return fetch("http://127.0.0.1:5000/")
+                    .then((res) => {
+                        if (!res.ok) {
+                            throw new Error
+                                (`HTTP error! Status: ${res.status}`);
+                        }
+                        return res.json();
+                    })
+                    .catch((error) => 
+                           console.error("Unable to fetch data:", error));
+            }
+            function on_load() {
+                document.getElementById("test").innerText = ""
+                json_data = fetchJSONData().then((data) => {
+                    set_items_html(data)
+                    test = document.getElementById("test")
+                    test_p = document.createElement("p")
+                    test_p.id = "testp"
+                    test_p.innerText = "TEST"
+                    test.append(test_p)
+                });
+            }
+            function load_types(json){
+                types_json = load_json_to_dict("Type", "name", json)
+                types = {}
+                Object.keys(types_json).forEach((key)=>{
+                    types[key] = new ItemType(types_json[key].name, types_json[key].parent, types_json[key].tobuy_rank_multiplyer)
+                })
+                Object.keys(types).forEach((key)=>{
+                    if ("string" == typeof types[key].parent) {
+                        console.log("replacing " + types[key].parent + " with " + types[types[key].parent])
+                        types[key].parent = types[types[key].parent]
+                    }
+                })
+                return types
+            }
+            function load_items(json){
+                items = load_json_to_dict("Item", "name", json)
+                types = load_types(json)
+                Object.keys(items).forEach((key)=>{
+                    items[key].type = types[items[key].type]
+                })
+                result = {}
+                Object.keys(items).forEach((key)=>{
+                    result[key] = new Item(items[key].name, items[key].type, items[key].tobuy_rank_multiplyer, items[key].allergen)
+                })
+                return result
+            }
+            function set_items_html(json){
+                items = load_items(json)
+                items_div = document.getElementById("items")
+                test_p = document.createElement("p")
+                test_p.innerText = Object.keys(json["Item"]).length
+                items_div.append(test_p)
+                Object.keys(items).forEach((key) => {
+                    items_div.append(items[key].make_div())
+                })
+            }
+            function load_json_to_dict(obj_name, id, json){
+                result = {}
+                arr = json[obj_name]
+                for (let i = 0; i < Object.keys(arr).length; i++) {
+                    obj = {}
+                    Object.keys(arr[i]).forEach((value) => {
+                        obj[value] = arr[i][value]
+                    })
+                    result[arr[i][id]] = obj
+                }
+                return result
+            }
+            class ItemType{
+                constructor(name, parent, toBuy){
+                    this.name = name
+                    this.parent = parent
+                    this.toBuy = toBuy
+                    console.log(name+" + "+parent+" = "+this)
+                }
+                get_toBuy(){
+                    var result = this.toBuy
+                    var type = this.parent
+                    while(result === null){
+                        if(type == null || typeof type=="string"){
+                            return 0
+                        }
+                        result = type.toBuy
+                        type = type.parent
+                    }
+                    return result
+                }
+
+                toString(){
+                    if(this.parent!=null){
+                        return this.parent + ", " + this.name
+                    }
+                    return this.name
+                }
+            }
+            class Item{
+                
+                constructor(name, type, toBuy, allergen){
+                    this.name = name
+                    this.type = type
+                    this.toBuy = toBuy
+                    this.allergen = allergen
+                }
+
+                get_toBuy(){
+                    if (this.toBuy){
+                        return this.toBuy
+                    }
+                    return this.type.get_toBuy()
+                }
+
+                make_div(){
+                    var div = document.createElement("div")
+                    div.id = "item_"+this.name
+                    div.class = "item_container"
+                    div.style = "border: solid 2px black;"
+
+                    var name_p = document.createElement("p")
+                    name_p.id = div.id+"_name"
+                    name_p.class = "item_value"
+                    name_p.innerText = this.name
+                    div.append(name_p)
+
+                    var type_p = document.createElement("p")
+                    type_p.id = div.id+"_type"
+                    type_p.class = "item_value"
+                    type_p.innerText = this.type
+                    div.append(type_p)
+
+                    var toBuy_p = document.createElement("p")
+                    toBuy_p.id = div.id+"_toBuy"
+                    toBuy_p.class = "item_value"
+                    toBuy_p.innerText = this.get_toBuy()
+                    div.append(toBuy_p)
+
+                    var allergen_p = document.createElement("p")
+                    allergen_p.id = div.id+"_allergen"
+                    allergen_p.class = "item_value"
+                    allergen_p.innerText = this.allergen
+                    div.append(allergen_p)
+                    
+                    var test_p = document.createElement("p")
+                    test_p.innerText = JSON.stringify(this)
+                    div.append(test_p)
+
+                    return div
+                }
+            }
+        </script>
+    </head>
+    <body onload="on_load()">
+        <button onclick="on_load()">
+            TEST
+        </button>
+        <div id="test">
+        </div>
+        <div id="items">
+
+        </div>
+    </body>
+</html>

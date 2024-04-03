@@ -1,0 +1,620 @@
+{
+    "Allergen": [
+        {
+            "name": "Lactose"
+        },
+        {
+            "name": "Peanuts"
+        },
+        {
+            "name": "Gluten"
+        }
+    ],
+    "Item": [
+        {
+            "name": "Penne",
+            "type": "Noodles",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Gluten"
+        },
+        {
+            "name": "Basil",
+            "type": "Spice",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Onion",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Italian Hard Cheese",
+            "type": "Cheese",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Lactose"
+        },
+        {
+            "name": "Porree",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Cooking Creme",
+            "type": "Ingredient",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Lactose"
+        },
+        {
+            "name": "Garlic",
+            "type": "Spice",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Carrot",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Oil",
+            "type": "Ingredient",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Big Pot",
+            "type": "Pot",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Big Pan",
+            "type": "Pan",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Blender",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Sieve",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Tall Bowl",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Small Bowl",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Small Pot",
+            "type": "Pot",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Small Pan",
+            "type": "Pan",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Basmatireis",
+            "type": "Rice",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Gluten"
+        },
+        {
+            "name": "Bushbean",
+            "type": "Beans",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Chilli",
+            "type": "Spice",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Spring Onion",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Coconut milk",
+            "type": "Perishable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Peanuts",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Peanuts"
+        },
+        {
+            "name": "Peanutbutter",
+            "type": "Ingredient",
+            "tobuy_rank_multiplyer": null,
+            "allergen": "Peanuts"
+        },
+        {
+            "name": "Lime",
+            "type": "Fruit",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Ginger",
+            "type": "Vegetable",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Soysauce",
+            "type": null,
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Grater",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Peeler",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Champignons",
+            "type": "Mushroom",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
+            "name": "Rice Cooker",
+            "type": "Implement",
+            "tobuy_rank_multiplyer": 0,
+            "allergen": null
+        }
+    ],
+    "ItemToRecipy": [
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Penne",
+            "missing_rank_multiplier": 0,
+            "amount": 270,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Basil",
+            "missing_rank_multiplier": 0.85,
+            "amount": 10,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Onion",
+            "missing_rank_multiplier": 0.8,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Italian Hard Cheese",
+            "missing_rank_multiplier": 0.8,
+            "amount": 40,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Porree",
+            "missing_rank_multiplier": 0.5,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Garlic",
+            "missing_rank_multiplier": 0.8,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Cooking Creme",
+            "missing_rank_multiplier": 0.75,
+            "amount": 225,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Carrot",
+            "missing_rank_multiplier": 0.5,
+            "amount": 2,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Oil",
+            "missing_rank_multiplier": 0.3,
+            "amount": 1,
+            "measurement": "TS"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Big Pot",
+            "missing_rank_multiplier": 0,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Blender",
+            "missing_rank_multiplier": 0.5,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "item": "Sieve",
+            "missing_rank_multiplier": 0.9,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Basmatireis",
+            "missing_rank_multiplier": 0,
+            "amount": 150,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Champignons",
+            "missing_rank_multiplier": 0.5,
+            "amount": 200,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Bushbean",
+            "missing_rank_multiplier": 0.6,
+            "amount": 150,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Carrot",
+            "missing_rank_multiplier": 0.6,
+            "amount": 2,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Chilli",
+            "missing_rank_multiplier": 0.9,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Lime",
+            "missing_rank_multiplier": 0.9,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Spring Onion",
+            "missing_rank_multiplier": 0.75,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Coconut milk",
+            "missing_rank_multiplier": 0.75,
+            "amount": 180,
+            "measurement": "ml"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Peanutbutter",
+            "missing_rank_multiplier": 0.8,
+            "amount": 25,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Peanuts",
+            "missing_rank_multiplier": 0.75,
+            "amount": 20,
+            "measurement": "g"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Soysauce",
+            "missing_rank_multiplier": 0.75,
+            "amount": 25,
+            "measurement": "ml"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Grater",
+            "missing_rank_multiplier": 0.8,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Penne",
+            "missing_rank_multiplier": 0.9,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Rice Cooker",
+            "missing_rank_multiplier": 0.2,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Big Pan",
+            "missing_rank_multiplier": 0,
+            "amount": 1,
+            "measurement": ""
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "item": "Oil",
+            "missing_rank_multiplier": 0.4,
+            "amount": 2,
+            "measurement": "TS"
+        }
+    ],
+    "Recipy": [
+        {
+            "name": "Penne mit Basilikumso\u00dfe",
+            "image_link": "https://img.hellofresh.com/w_640,q_auto,f_auto,c_limit,fl_lossy/q_auto/recipes/image/HF_Y24_R06_W13_DE_R2951-6_Main_low-2f4953c6.jpg"
+        },
+        {
+            "name": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "image_link": "https://img.hellofresh.com/w_640,q_auto,f_auto,c_limit,fl_lossy/q_auto/recipes/image/R17_W13_DE_R2249-29_Main_low-67b7e1ad.jpg"
+        }
+    ],
+    "RecipyTag": [
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "tag": "Vegetarian"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "tag": "Vegetarian"
+        }
+    ],
+    "Step": [
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 4,
+            "step": "Cut Carrot in half circles",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/653a601ae06ba9910276dd69/step-216e7e00.jpg"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 1,
+            "step": "Cut Porree in thin slices",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/653a601ae06ba9910276dd69/step-216e7e00.jpg"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 2,
+            "step": "Fill big Pot with Water and salt, Cook Penne for ~10min",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/653a601ae06ba9910276dd69/step-ea483720.jpg"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 3,
+            "step": "Put Basil, Cooking Cream, 50ml water and spices into Blender",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/653a601ae06ba9910276dd69/step-fb79c730.jpg"
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 5,
+            "step": "Cut Onion and dried Tomato",
+            "image": null
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 6,
+            "step": "Pour noodles and water through Sieve, put Oil and cut vegetables into newly emtpied pot, cook ~4min",
+            "image": null
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 7,
+            "step": "Put Blended sauce and Spices with the cooking vegetables",
+            "image": null
+        },
+        {
+            "recipy": "Penne mit Basilikumso\u00dfe",
+            "step_nr": 8,
+            "step": "Add Noodles back to pot, turn off heat, mix well, top with cheese, done!",
+            "image": null
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 1,
+            "step": "Cook Rice",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/6513f153be675f371f89c5a5/step-f1c32a00.jpg"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 2,
+            "step": "Cut Garlic, Chilli and Ginger",
+            "image": null
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 3,
+            "step": "Mix 50ml Water, coconut milk, Soysauce, Peanutbutter, Garlic, Ginger, 1TS Oil, Chilli, Salt, Pepper and some Lime juice to a sauce",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/6513f153be675f371f89c5a5/step-4b35bc30.jpg"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 4,
+            "step": "Cut Beans, Carrot, Champingions, Spring Onion, Chilli",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/6513f153be675f371f89c5a5/step-e3a42d10.jpg"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 5,
+            "step": "Heat up 1TS Oil in Big Pan, Add Spring Onion, Champignions, Carrots and Beans, Cook for ~4min",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/6513f153be675f371f89c5a5/step-a02c7f40.jpg"
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 6,
+            "step": "Add Sauce to Pan, Cook till Sauce is thick enough",
+            "image": null
+        },
+        {
+            "recipy": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "step_nr": 7,
+            "step": "Put Rice on Plates, Top with Sauce+Vegetables from Pan, Peanuts and Lime",
+            "image": "https://img.hellofresh.com/w_384,q_auto,f_auto,c_limit,fl_lossy/hellofresh_s3/6513f153be675f371f89c5a5/step-147fda50.jpg"
+        }
+    ],
+    "Substitution": [
+        {
+            "to_substitue": "Rice Cooker",
+            "with_substitute": "Small Pot",
+            "ranking": 0.99
+        },
+        {
+            "to_substitue": "Rice Cooker",
+            "with_substitute": "Big Pot",
+            "ranking": 0.95
+        },
+        {
+            "to_substitue": "Small Pot",
+            "with_substitute": "Big Pot",
+            "ranking": 0.9
+        },
+        {
+            "to_substitue": "Big Pot",
+            "with_substitute": "Small Pot",
+            "ranking": 0.3
+        }
+    ],
+    "Tag": [
+        {
+            "name": "Vegan"
+        },
+        {
+            "name": "Vegetarian"
+        },
+        {
+            "name": "Fast"
+        },
+        {
+            "name": "Simple"
+        },
+        {
+            "name": "Slow"
+        },
+        {
+            "name": "Comlex"
+        }
+    ],
+    "Type": [
+        {
+            "name": "Ingredient",
+            "parent": null,
+            "tobuy_rank_multiplier": 0.75
+        },
+        {
+            "name": "Implement",
+            "parent": null,
+            "tobuy_rank_multiplier": 0
+        },
+        {
+            "name": "Pot",
+            "parent": "Implement",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Pan",
+            "parent": "Implement",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Cheese",
+            "parent": "Perishable",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Noodles",
+            "parent": "Ingredient",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Rice",
+            "parent": "Ingredient",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Spice",
+            "parent": "Ingredient",
+            "tobuy_rank_multiplier": 0.9
+        },
+        {
+            "name": "Perishable",
+            "parent": "Ingredient",
+            "tobuy_rank_multiplier": 0.6
+        },
+        {
+            "name": "Vegetable",
+            "parent": "Perishable",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Fruit",
+            "parent": "Perishable",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Beans",
+            "parent": "Vegetable",
+            "tobuy_rank_multiplier": null
+        },
+        {
+            "name": "Mushroom",
+            "parent": "Vegetable",
+            "tobuy_rank_multiplier": null
+        }
+    ]
+}
