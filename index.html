@@ -24,49 +24,79 @@
                     .catch((error) => 
                            console.error("Unable to fetch data:", error));
             }
+            var items
+            var types
+            var tags
+            var recipies
+
             function on_load() {
-                document.getElementById("test").innerText = ""
                 json_data = fetchJSONData().then((data) => {
+                    load_recipe(data)
                     set_items_html(data)
-                    test = document.getElementById("test")
-                    test_p = document.createElement("p")
-                    test_p.id = "testp"
-                    test_p.innerText = "TEST"
-                    test.append(test_p)
                 });
             }
             function load_types(json){
-                types_json = load_json_to_dict("Type", "name", json)
+                if(types){
+                    return types
+                }
                 types = {}
+                types_json = load_json_to_dict("Type", "name", json)
                 Object.keys(types_json).forEach((key)=>{
-                    types[key] = new ItemType(types_json[key].name, types_json[key].parent, types_json[key].tobuy_rank_multiplyer)
+                    types[key] = new ItemType(types_json[key].name, types_json[key].parent, types_json[key].tobuy_rank_multiplier)
                 })
                 Object.keys(types).forEach((key)=>{
                     if ("string" == typeof types[key].parent) {
-                        console.log("replacing " + types[key].parent + " with " + types[types[key].parent])
                         types[key].parent = types[types[key].parent]
                     }
                 })
                 return types
             }
             function load_items(json){
-                items = load_json_to_dict("Item", "name", json)
+                if(items){
+                    return items
+                }
+                items_json = load_json_to_dict("Item", "name", json)
                 types = load_types(json)
-                Object.keys(items).forEach((key)=>{
-                    items[key].type = types[items[key].type]
+                Object.keys(items_json).forEach((key)=>{
+                    items_json[key].type = types[items_json[key].type]
                 })
+                items = {}
+                Object.keys(items_json).forEach((key)=>{
+                    items[key] = new Item(items_json[key].name, items_json[key].type, items_json[key].tobuy_rank_multiplyer, items_json[key].allergen)
+                })
+                return items
+            }
+            function load_items_to_recipe(json){
+                load_items(json)
+                item_recipe_json = load_json_to_nested_dict("ItemToRecipe", "recipe", "item", json)
                 result = {}
-                Object.keys(items).forEach((key)=>{
-                    result[key] = new Item(items[key].name, items[key].type, items[key].tobuy_rank_multiplyer, items[key].allergen)
+                Object.keys(item_recipe_json).forEach((r)=>{
+                    if(!(r in Object.keys(item_recipe_json[r]))){
+                        result[r] = {}
+                    }
+                    Object.keys(item_recipe_json[r]).forEach((i)=>{
+                        result[r][i] = new ItemToRecipe(r, items[i], item_recipe_json[r][i].missing, item_recipe_json[r][i].amount, item_recipe_json[r][i].measurment)
+                    })
                 })
                 return result
+            }
+            function load_recipe(json){
+                if(recipies){
+                    return recipies
+                }
+                items_to_recipy = load_items_to_recipe(json)
+                recipe_json = load_json_to_dict("Recipe","name", json)
+                steps = load_json_to_nested_dict("Step", "recipe", "step_nr", json)
+                tags = load_json_to_nested_dict("RecipeTag", "recipe", "tag", json)
+                var recipies = []
+                Object.keys(recipe_json).forEach((key)=>{
+                    recipies.push(new Recipe(key, items_to_recipy[key], steps[key], Object.keys(tags[key])))
+                })
+                return recipies
             }
             function set_items_html(json){
                 items = load_items(json)
                 items_div = document.getElementById("items")
-                test_p = document.createElement("p")
-                test_p.innerText = Object.keys(json["Item"]).length
-                items_div.append(test_p)
                 Object.keys(items).forEach((key) => {
                     items_div.append(items[key].make_div())
                 })
@@ -83,18 +113,53 @@
                 }
                 return result
             }
+            function load_json_to_nested_dict(obj_name, id1, id2, json){
+                result = {}
+                arr = json[obj_name]
+                for (let i = 0; i < Object.keys(arr).length; i++) {
+                    obj = {}
+                    Object.keys(arr[i]).forEach((value) => {
+                        obj[value] = arr[i][value]
+                    })
+                    if(!(result[arr[i][id1]])){
+                        result[arr[i][id1]] = {}
+                    }
+                    result[arr[i][id1]][arr[i][id2]] = obj
+                }
+                return result
+            }
+            class Recipe{
+                constructor(name, items, steps, tags){
+                    this.name = name
+                    this.items = items
+                    this.steps = steps
+                    this.tags = tags
+                }
+
+                get_rating(){
+                    return 1
+                }
+            }
+            class ItemToRecipe{
+                constructor(recipe, item, missing, amount, measurment){
+                    this.recipe = recipe
+                    this.item = item
+                    this.missing = missing
+                    this.amount = amount
+                    this.measurment = measurment
+                }
+            }
             class ItemType{
                 constructor(name, parent, toBuy){
                     this.name = name
                     this.parent = parent
                     this.toBuy = toBuy
-                    console.log(name+" + "+parent+" = "+this)
                 }
                 get_toBuy(){
                     var result = this.toBuy
                     var type = this.parent
-                    while(result === null){
-                        if(type == null || typeof type=="string"){
+                    while(result == null){
+                        if(type == null || typeof type == "string"){
                             return 0
                         }
                         result = type.toBuy
@@ -104,7 +169,7 @@
                 }
 
                 toString(){
-                    if(this.parent!=null){
+                    if(this.parent){
                         return this.parent + ", " + this.name
                     }
                     return this.name
@@ -117,13 +182,18 @@
                     this.type = type
                     this.toBuy = toBuy
                     this.allergen = allergen
+                    this.available = true
+                    this.custom_multiplier = 1
                 }
 
                 get_toBuy(){
                     if (this.toBuy){
                         return this.toBuy
                     }
-                    return this.type.get_toBuy()
+                    if (this.type){
+                        return this.type.get_toBuy()
+                    }
+                    return 0
                 }
 
                 make_div(){
@@ -136,8 +206,11 @@
                     name_p.id = div.id+"_name"
                     name_p.class = "item_value"
                     name_p.innerText = this.name
+                    if(this.allergen){
+                        name_p.innerText += " (" + this.allergen + ")"
+                    }
                     div.append(name_p)
-
+                    /*
                     var type_p = document.createElement("p")
                     type_p.id = div.id+"_type"
                     type_p.class = "item_value"
@@ -155,10 +228,16 @@
                     allergen_p.class = "item_value"
                     allergen_p.innerText = this.allergen
                     div.append(allergen_p)
-                    
-                    var test_p = document.createElement("p")
-                    test_p.innerText = JSON.stringify(this)
-                    div.append(test_p)
+                    */
+
+                    var available_label = document.createElement("label")
+                    available_label.innerText = "Available"
+                    available_label.class = "switch"
+                    var available_input = document.createElement("input")
+                    available_input.type = "checkbox"
+                    available_input.onchange = "function(){console.log(" + this.name + ")}"
+                    available_label.append(available_input)
+                    div.append(available_label)
 
                     return div
                 }
@@ -166,11 +245,6 @@
         </script>
     </head>
     <body onload="on_load()">
-        <button onclick="on_load()">
-            TEST
-        </button>
-        <div id="test">
-        </div>
         <div id="items">
 
         </div>
