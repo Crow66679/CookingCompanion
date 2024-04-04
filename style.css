@@ -1,0 +1,88 @@
+body{
+    background-color: green;
+}
+
+div{
+    background-color: #BADA5588;
+    border: solid 1px #11FF2288;
+}
+
+.item_div{
+    display: grid;
+    grid-template-columns: 30px auto 100px;
+    grid-template-areas: 
+        'available item_name preference_div';
+    margin-left: 5px;
+    padding: 1px;
+}
+
+.available{
+    grid-area: available;
+    border: solid 2px red;
+}
+
+.item_name{
+    grid-area: item_name;
+    border: solid 2px #F42069;
+}
+
+.preference_div{
+    grid-area: preference_div;
+    border: solid 2px blue;
+}
+
+#items{
+    display: grid;
+    grid-template-columns: 50% auto;
+    grid-template-areas: 
+        'ingredient implement';
+}
+
+.type_div{
+    padding: 1px;
+    margin-left: 10px;
+}
+
+.recipe_overview_div{
+    border: solid 2px black;
+    display: grid;
+    grid-template-columns: 80% auto;
+    grid-template-areas: 
+        'recipe_name recipe_rating';
+}
+
+.recipe_overview_div:hover{
+    background-color: #AAAAAA;
+}
+
+.recipe_name{
+    grid-area: recipe_name;
+}
+
+.recipe_rating{
+    grid-area: recipe_rating;
+}
+
+.recipe_item_div{
+    display: grid;
+    grid-template-columns: min-content min-content auto auto;
+    grid-template-areas: 
+        'item_amount item_measurement item_name item_extra';
+}
+
+.recipe_item_amount{
+    grid-area: item_amount;
+}
+
+.recipe_item_measurment{
+    grid-area: item_measurement;
+}
+
+.recipe_item_name{
+    margin-left: 3px;
+    grid-area: item_name;
+}
+
+.recipe_item_extra{
+    grid-area: item_extra;
+}

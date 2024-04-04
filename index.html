@@ -10,7 +10,7 @@
         <title></title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="style.css">
         <script>
             function fetchJSONData() {
                 return fetch("http://127.0.0.1:5000/")
@@ -31,9 +31,13 @@
 
             function on_load() {
                 json_data = fetchJSONData().then((data) => {
-                    load_recipe(data)
                     set_items_html(data)
+                    load_recipes(data)
+                    set_recepies_html(data)
                 });
+            }
+            function get_store_available(){
+                return document.getElementById("store_available").checked
             }
             function load_types(json){
                 if(types){
@@ -46,17 +50,18 @@
                 })
                 Object.keys(types).forEach((key)=>{
                     if ("string" == typeof types[key].parent) {
-                        types[key].parent = types[types[key].parent]
+                        types[key].set_parent(types[types[key].parent])
                     }
                 })
                 return types
             }
             function load_items(json){
+                load_types(json)
                 if(items){
                     return items
                 }
                 items_json = load_json_to_dict("Item", "name", json)
-                types = load_types(json)
+                
                 Object.keys(items_json).forEach((key)=>{
                     items_json[key].type = types[items_json[key].type]
                 })
@@ -75,12 +80,12 @@
                         result[r] = {}
                     }
                     Object.keys(item_recipe_json[r]).forEach((i)=>{
-                        result[r][i] = new ItemToRecipe(r, items[i], item_recipe_json[r][i].missing, item_recipe_json[r][i].amount, item_recipe_json[r][i].measurment)
+                        result[r][i] = new ItemToRecipe(r, items[i], item_recipe_json[r][i].missing_rank_multiplier, item_recipe_json[r][i].amount, item_recipe_json[r][i].measurement)
                     })
                 })
                 return result
             }
-            function load_recipe(json){
+            function load_recipes(json){
                 if(recipies){
                     return recipies
                 }
@@ -88,18 +93,31 @@
                 recipe_json = load_json_to_dict("Recipe","name", json)
                 steps = load_json_to_nested_dict("Step", "recipe", "step_nr", json)
                 tags = load_json_to_nested_dict("RecipeTag", "recipe", "tag", json)
-                var recipies = []
+                recipies = []
                 Object.keys(recipe_json).forEach((key)=>{
                     recipies.push(new Recipe(key, items_to_recipy[key], steps[key], Object.keys(tags[key])))
                 })
                 return recipies
             }
             function set_items_html(json){
-                items = load_items(json)
+                load_items(json)
                 items_div = document.getElementById("items")
-                Object.keys(items).forEach((key) => {
-                    items_div.append(items[key].make_div())
+                Object.values(types).forEach((type) => {
+                    if(type.parent == null){
+                        document.getElementById("items").append(type.make_div())
+                    }
                 })
+            }
+            function set_recepies_html(json){
+                if(json){
+                    load_recipes(json)
+                }
+                if(recipies){
+                    recipies.sort(function compare(a,b){return b.get_rating()-a.get_rating()})
+                    var recipe_container = document.getElementById("recipes")
+                    recipe_container.innerHTML = ""
+                    recipies.forEach((r)=>{recipe_container.append(r.make_div())})
+                }
             }
             function load_json_to_dict(obj_name, id, json){
                 result = {}
@@ -137,7 +155,41 @@
                 }
 
                 get_rating(){
-                    return 1
+                    var result = 1
+                    Object.values(this.items).forEach((item)=>{result*=item.get_total_multiplier()})
+                    return result
+                }
+
+                make_div(){
+                    var div = document.createElement("div")
+
+                    var overview_div = document.createElement("div")
+                    overview_div.className = "recipe_overview_div"
+                    overview_div.id = "RECIPE_OVERVIEW_" + this.name
+
+                    var name_p = document.createElement("p")
+                    name_p.innerText = this.name
+                    name_p.className = "recipe_name"
+                    overview_div.append(name_p)
+
+                    var rate_p = document.createElement("p")
+                    rate_p.innerText = "Rating: " + Math.round(this.get_rating()*100) + "% fit"
+                    rate_p.className = "recipe_rating"
+                    overview_div.append(rate_p)
+                    div.append(overview_div)
+
+                    var details_div = document.createElement("div")
+                    details_div.className = "recipe_details_div"
+                    details_div.id = "RECIPE_DETAILS_DIV_" + this.name
+
+                    var ingredients_div = document.createElement("div")
+                    ingredients_div.className = "ingredients_div"
+                    ingredients_div.id = "INGREDIENTS_DIV_" + this.name
+                    Object.values(this.items).forEach((item)=>ingredients_div.append(item.make_div()))
+                    details_div.append(ingredients_div)
+
+                    div.append(details_div)
+                    return div
                 }
             }
             class ItemToRecipe{
@@ -148,12 +200,62 @@
                     this.amount = amount
                     this.measurment = measurment
                 }
+
+                is_missing(){
+                    return this.item.get_total_multiplier() < this.missing 
+                }
+
+                get_total_multiplier(){
+                    return Math.max(this.item.get_total_multiplier(), this.missing)
+                }
+
+                make_div(){
+                    var div = document.createElement("div")
+                    div.className = "recipe_item_div"
+                    div.id = "RECIPE_ITEM_DIV_" + this.item.name
+
+                    var amount_p = document.createElement("p")
+                    amount_p.className = "recipe_item_amount"
+                    amount_p.innerText = this.amount
+                    div.append(amount_p)
+
+                    var measurment_p = document.createElement("p")
+                    measurment_p.className = "recipe_item_measurment"
+                    measurment_p.innerText = this.measurment
+                    div.append(measurment_p)
+
+                    var name_p = document.createElement("p")
+                    name_p.className = "recipe_item_name"
+                    name_p.innerText = this.item.name
+                    div.append(name_p)
+
+                    var extra_p = document.createElement("p")
+                    extra_p.className = "recipe_item_extra"
+                    if(this.is_missing()){
+                        extra_p.innerText = "(go without)"
+                    }
+                    else if(!this.item.get_available()){
+                        extra_p.innerText = "(buy)"
+                    }
+                    div.append(extra_p)
+
+                    return div
+                }
             }
             class ItemType{
                 constructor(name, parent, toBuy){
                     this.name = name
-                    this.parent = parent
+                    this.set_parent(parent)
                     this.toBuy = toBuy
+                    this.children = []
+                    this.items = []
+                }
+
+                set_parent(parent){
+                    if(parent && typeof parent == "object"){
+                        parent.children.push(this)
+                    }
+                    this.parent = parent
                 }
                 get_toBuy(){
                     var result = this.toBuy
@@ -174,16 +276,83 @@
                     }
                     return this.name
                 }
+
+                make_div(){
+                    var div = document.createElement("div")
+                    div.id = "TYPE_" + this.name + "_DIV"
+                    div.setAttribute("grid-area", this.name)
+                    div.className = "type_div"
+                    var name_p = document.createElement("p")
+                    name_p.innerText = this.name
+                    div.append(name_p)
+                    this.items.forEach((item)=>{div.append(item.make_div())})
+                    this.children.forEach((child)=>{div.append(child.make_div())})
+                    return div
+                }
             }
             class Item{
                 
                 constructor(name, type, toBuy, allergen){
                     this.name = name
-                    this.type = type
+                    this.set_type(type)
                     this.toBuy = toBuy
                     this.allergen = allergen
-                    this.available = true
-                    this.custom_multiplier = 1
+                    
+                    this.available_input = document.createElement("input")
+                    this.available_input.type = "checkbox"
+                    this.available_input.className = "available"
+                    this.available_input.id = "ITEM_AVAILABLE_" + this.name
+                    this.available_input.checked = true
+
+                    this.preferred_input = document.createElement("input")
+                    this.preferred_input.type = "radio"
+                    this.preferred_input.className = "preference_radio"
+                    this.preferred_input.name = "ITEM_PREFERENCE_" + this.name
+                    this.preferred_input.id = "ITEM_PREFERENCE_" + this.name + "_PREFFERED"
+                    this.preferred_input.value = 1.5
+
+                    this.neutural_input = document.createElement("input")
+                    this.neutural_input.type = "radio"
+                    this.neutural_input.className = "preference_radio"
+                    this.neutural_input.name = "ITEM_PREFERENCE_" + this.name
+                    this.neutural_input.id = "ITEM_PREFERENCE_" + this.name + "_NEUTURAL"
+                    this.neutural_input.checked = true
+                    this.neutural_input.value = 1
+
+                    this.disliked_input = document.createElement("input")
+                    this.disliked_input.type = "radio"
+                    this.disliked_input.className = "preference_radio"
+                    this.disliked_input.name = "ITEM_PREFERENCE_" + this.name
+                    this.disliked_input.id = "ITEM_PREFERENCE_" + this.name + "_DISLIKED"
+                    this.disliked_input.value = 0.5
+
+                    this.exclude_input = document.createElement("input")
+                    this.exclude_input.type = "radio"
+                    this.exclude_input.className = "preference_radio"
+                    this.exclude_input.name = "ITEM_PREFERENCE_" + this.name
+                    this.exclude_input.id = "ITEM_PREFERENCE_" + this.name + "_EXPLUDE"
+                    this.exclude_input.value = 0
+
+                    this.preferred_div = document.createElement("div")
+                    this.preferred_div.id = "ITEM_PREFERENCE_DIV_" + this.name
+                    this.preferred_div.className = "preference_div"
+                    this.preferred_div.append(this.preferred_input)
+                    this.preferred_div.append(this.neutural_input)
+                    this.preferred_div.append(this.disliked_input)
+                    this.preferred_div.append(this.exclude_input)
+
+                    this.available_input.onchange = ()=>{set_recepies_html(null)}
+                    this.preferred_input.onchange = ()=>{set_recepies_html(null)}
+                    this.neutural_input.onchange = ()=>{set_recepies_html(null)}
+                    this.disliked_input.onchange = ()=>{set_recepies_html(null)}
+                    this.exclude_input.onchange = ()=>{set_recepies_html(null)}
+                }
+
+                set_type(type){
+                    if(type && typeof type == "object"){
+                        type.items.push(this)
+                    }
+                    this.type = type
                 }
 
                 get_toBuy(){
@@ -196,48 +365,44 @@
                     return 0
                 }
 
+                get_available(){
+                    return this.available_input.checked
+                }
+
+                get_prefence_multiplier(){
+                    return document.querySelector("input[name=\"ITEM_PREFERENCE_" + this.name + "\"]:checked").value
+                }
+
+                get_total_multiplier(){
+                    var result = this.get_prefence_multiplier()
+                    if(!this.get_available()){
+                        if(get_store_available()){
+                            result *= this.get_toBuy()
+                        }
+                        else{
+                            result = 0
+                        }
+                    }
+                    return result
+                }
+
                 make_div(){
                     var div = document.createElement("div")
-                    div.id = "item_"+this.name
-                    div.class = "item_container"
-                    div.style = "border: solid 2px black;"
+                    div.id = "ITEM_"+this.name
+                    div.className = "item_div"
+
+                    div.append(this.available_input)
 
                     var name_p = document.createElement("p")
                     name_p.id = div.id+"_name"
-                    name_p.class = "item_value"
+                    name_p.className = "item_name"
                     name_p.innerText = this.name
                     if(this.allergen){
                         name_p.innerText += " (" + this.allergen + ")"
                     }
                     div.append(name_p)
-                    /*
-                    var type_p = document.createElement("p")
-                    type_p.id = div.id+"_type"
-                    type_p.class = "item_value"
-                    type_p.innerText = this.type
-                    div.append(type_p)
 
-                    var toBuy_p = document.createElement("p")
-                    toBuy_p.id = div.id+"_toBuy"
-                    toBuy_p.class = "item_value"
-                    toBuy_p.innerText = this.get_toBuy()
-                    div.append(toBuy_p)
-
-                    var allergen_p = document.createElement("p")
-                    allergen_p.id = div.id+"_allergen"
-                    allergen_p.class = "item_value"
-                    allergen_p.innerText = this.allergen
-                    div.append(allergen_p)
-                    */
-
-                    var available_label = document.createElement("label")
-                    available_label.innerText = "Available"
-                    available_label.class = "switch"
-                    var available_input = document.createElement("input")
-                    available_input.type = "checkbox"
-                    available_input.onchange = "function(){console.log(" + this.name + ")}"
-                    available_label.append(available_input)
-                    div.append(available_label)
+                    div.append(this.preferred_div)
 
                     return div
                 }
@@ -245,7 +410,11 @@
         </script>
     </head>
     <body onload="on_load()">
+        <input type="checkbox" id="store_available" checked onchange="set_recepies_html(null)">
         <div id="items">
+
+        </div>
+        <div id="recipes">
 
         </div>
     </body>

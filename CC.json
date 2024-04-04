@@ -169,7 +169,7 @@
         },
         {
             "name": "Soysauce",
-            "type": null,
+            "type": "Spice",
             "tobuy_rank_multiplyer": null,
             "allergen": null
         },
