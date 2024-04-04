@@ -26,13 +26,17 @@
             }
             var items
             var types
-            var tags
+            var tags = {}
+            var allergens = {}
+            var substitutes
             var recipies
 
             function on_load() {
                 json_data = fetchJSONData().then((data) => {
-                    set_items_html(data)
                     load_recipes(data)
+                    set_items_html(data)
+                    set_tags_html()
+                    set_allergens_html()
                     set_recepies_html(data)
                 });
             }
@@ -55,6 +59,14 @@
                 })
                 return types
             }
+            function load_substitutes(json){
+                var substitutes_json = load_json_to_nested_dict("Substitution", "to_substitue", "with_substitute", json)
+                Object.keys(substitutes_json).forEach((from)=>{
+                    Object.keys(substitutes_json[from]).forEach((to)=>{
+                        new Substitute(items[from], items[to], substitutes_json[from][to].ranking)
+                    })
+                })
+            }
             function load_items(json){
                 load_types(json)
                 if(items){
@@ -69,6 +81,7 @@
                 Object.keys(items_json).forEach((key)=>{
                     items[key] = new Item(items_json[key].name, items_json[key].type, items_json[key].tobuy_rank_multiplyer, items_json[key].allergen)
                 })
+                load_substitutes(json)
                 return items
             }
             function load_items_to_recipe(json){
@@ -91,11 +104,11 @@
                 }
                 items_to_recipy = load_items_to_recipe(json)
                 recipe_json = load_json_to_dict("Recipe","name", json)
-                steps = load_json_to_nested_dict("Step", "recipe", "step_nr", json)
-                tags = load_json_to_nested_dict("RecipeTag", "recipe", "tag", json)
+                steps_json = load_json_to_nested_dict("Step", "recipe", "step_nr", json)
+                tags_json = load_json_to_nested_dict("RecipeTag", "recipe", "tag", json)
                 recipies = []
                 Object.keys(recipe_json).forEach((key)=>{
-                    recipies.push(new Recipe(key, items_to_recipy[key], steps[key], Object.keys(tags[key])))
+                    recipies.push(new Recipe(key, items_to_recipy[key], steps_json[key], Object.keys(tags_json[key])))
                 })
                 return recipies
             }
@@ -108,6 +121,34 @@
                     }
                 })
             }
+            function set_tags_html(){
+                var tags_div = document.createElement("div")
+                tags_div.className = "other_selecion"
+
+                var name_p = document.createElement("p")
+                name_p.innerText = "Recipe Tags:"
+                tags_div.append(name_p)
+
+                Object.keys(tags).forEach((tag)=>{
+                    tags_div.append(tags[tag].make_div())
+                })
+
+                document.getElementById("other").append(tags_div)
+            }
+            function set_allergens_html(){
+                var allergens_div = document.createElement("div")
+                allergens_div.className = "other_selecion"
+
+                var name_p = document.createElement("p")
+                name_p.innerText = "Exclude Allergens:"
+                allergens_div.append(name_p)
+
+                Object.keys(allergens).forEach((allergen)=>{
+                    allergens_div.append(allergens[allergen].make_div())
+                })
+
+                document.getElementById("other").append(allergens_div)
+            }
             function set_recepies_html(json){
                 if(json){
                     load_recipes(json)
@@ -116,7 +157,11 @@
                     recipies.sort(function compare(a,b){return b.get_rating()-a.get_rating()})
                     var recipe_container = document.getElementById("recipes")
                     recipe_container.innerHTML = ""
-                    recipies.forEach((r)=>{recipe_container.append(r.make_div())})
+                    recipies.forEach((r)=>{
+                        if(r.get_rating() > 0.1){
+                            recipe_container.append(r.make_div())
+                        }
+                    })
                 }
             }
             function load_json_to_dict(obj_name, id, json){
@@ -146,17 +191,67 @@
                 }
                 return result
             }
+            function get_preference_div(name, values, checked){
+                var preference_div = document.createElement("div")
+                preference_div.id = name + "_DIV"
+                preference_div.className = "preference_div"
+                
+                values.forEach((v)=>{
+                    var input = document.createElement("input")
+                    input.type = "radio"
+                    input.name = name
+                    input.id = name+"_"+v
+                    input.className = "preference_input"
+                    input.value = v
+                    input.checked = v == checked
+                    input.onchange = ()=>{set_recepies_html(null)}
+                    
+                    var label = document.createElement("label")
+                    label.for = name+"_"+v
+                    label.className = "preference_label"
+                    label.append(input)
+
+                    var image = document.createElement("img")
+                    image.className = "preference_img"
+                    if(v>1){
+                        image.src = "https://openmoji.org/data/color/svg/1F642.svg"
+                    }
+                    else if(v == 1){
+                        image.src = "https://openmoji.org/data/color/svg/1F610.svg"
+                    }
+                    else if(v>0){
+                        image.src = "https://openmoji.org/data/color/svg/2639.svg"
+                    }
+                    else {
+                        image.src = "https://openmoji.org/data/color/svg/1F6AB.svg"
+                    }
+                    label.append(image)
+
+                    preference_div.append(label)
+                })
+
+                return preference_div
+            }
             class Recipe{
-                constructor(name, items, steps, tags){
+                constructor(name, items, steps, recipe_tags){
                     this.name = name
                     this.items = items
                     this.steps = steps
-                    this.tags = tags
+                    this.recipe_tags = []
+                    recipe_tags.forEach((tag)=>{
+                        if(tag in Object.keys(tags)){
+                            this.recipe_tags.push(tags[tag])
+                        }
+                        else{
+                            this.recipe_tags.push(new RecipeTag(tag))
+                        }
+                    })
                 }
 
                 get_rating(){
                     var result = 1
                     Object.values(this.items).forEach((item)=>{result*=item.get_total_multiplier()})
+                    this.recipe_tags.forEach((tag)=>{result*=tag.get_prefence_multiplier()})
                     return result
                 }
 
@@ -172,6 +267,14 @@
                     name_p.className = "recipe_name"
                     overview_div.append(name_p)
 
+                    var tags_p = document.createElement("p")
+                    tags_p.innerText = ""
+                    tags_p.className = "recipe_tags"
+                    this.recipe_tags.forEach((tag)=>{
+                        tags_p.innerText += " " + tag.name
+                    })
+                    overview_div.append(tags_p)
+
                     var rate_p = document.createElement("p")
                     rate_p.innerText = "Rating: " + Math.round(this.get_rating()*100) + "% fit"
                     rate_p.className = "recipe_rating"
@@ -181,12 +284,48 @@
                     var details_div = document.createElement("div")
                     details_div.className = "recipe_details_div"
                     details_div.id = "RECIPE_DETAILS_DIV_" + this.name
+                    if(this.shown){
+                        details_div.style = "display: grid"
+                    }
+                    else {
+                        details_div.style = "display: none;"
+                    }
+                    overview_div.onclick = ()=>{
+                        this.shown = !this.shown
+                        if(this.shown){
+                            details_div.style = "display: grid"
+                        }
+                        else {
+                            details_div.style = "display: none;"
+                        }
+                    }
 
                     var ingredients_div = document.createElement("div")
-                    ingredients_div.className = "ingredients_div"
-                    ingredients_div.id = "INGREDIENTS_DIV_" + this.name
+                    ingredients_div.className = "recipe_ingredients_div"
+                    ingredients_div.id = "RECIPE_INGREDIENTS_DIV_" + this.name
                     Object.values(this.items).forEach((item)=>ingredients_div.append(item.make_div()))
                     details_div.append(ingredients_div)
+                    
+                    var steps_div = document.createElement("div")
+                    steps_div.className = "recipe_steps_div"
+                    steps_div.id = "RECIPE_STEPS_DEV_" + this.name
+                    Object.keys(this.steps).forEach((nr) => {
+                        var step_div = document.createElement("div")
+                        step_div.className = "step_div"
+
+                        var nr_p = document.createElement("p")
+                        nr_p.className = "step_nr_p"
+                        nr_p.innerText = "Step " + nr + ")"
+                        step_div.append(nr_p)
+
+                        var text_p = document.createElement("p")
+                        text_p.className = "step_text_p"
+                        text_p.innerText = this.steps[nr]["step"]
+                        step_div.append(text_p)
+
+                        steps_div.append(step_div)
+                    })
+                    details_div.append(steps_div)
 
                     div.append(details_div)
                     return div
@@ -202,7 +341,7 @@
                 }
 
                 is_missing(){
-                    return this.item.get_total_multiplier() < this.missing 
+                    return this.item.get_total_multiplier() <= this.missing
                 }
 
                 get_total_multiplier(){
@@ -216,13 +355,8 @@
 
                     var amount_p = document.createElement("p")
                     amount_p.className = "recipe_item_amount"
-                    amount_p.innerText = this.amount
+                    amount_p.innerText = this.amount+this.measurment
                     div.append(amount_p)
-
-                    var measurment_p = document.createElement("p")
-                    measurment_p.className = "recipe_item_measurment"
-                    measurment_p.innerText = this.measurment
-                    div.append(measurment_p)
 
                     var name_p = document.createElement("p")
                     name_p.className = "recipe_item_name"
@@ -231,11 +365,14 @@
 
                     var extra_p = document.createElement("p")
                     extra_p.className = "recipe_item_extra"
+                    if(!this.item.get_available() && get_store_available()){
+                        extra_p.innerText = "(buy)"
+                    }
                     if(this.is_missing()){
                         extra_p.innerText = "(go without)"
                     }
-                    else if(!this.item.get_available()){
-                        extra_p.innerText = "(buy)"
+                    if(this.item.best_substitution && ! this.item.get_available()){
+                        extra_p.innerText = "(substitute with " + this.item.best_substitution.to.name + ")"
                     }
                     div.append(extra_p)
 
@@ -249,6 +386,14 @@
                     this.toBuy = toBuy
                     this.children = []
                     this.items = []
+                    this.checkbox = document.createElement("input")
+                    this.checkbox.type = "checkbox"
+                    this.checkbox.className = "item_type_checkbox"
+                    this.checkbox.checked = true
+                    this.checkbox.onchange = ()=>{
+                        this.set_available(this.checkbox.checked)
+                        set_recepies_html(null)
+                    }
                 }
 
                 set_parent(parent){
@@ -257,6 +402,13 @@
                     }
                     this.parent = parent
                 }
+
+                set_available(bool){
+                    this.checkbox.checked = bool
+                    this.children.forEach((c)=>{c.set_available(bool)})
+                    this.items.forEach((i)=>{i.available_input.checked = bool})
+                }
+
                 get_toBuy(){
                     var result = this.toBuy
                     var type = this.parent
@@ -282,11 +434,31 @@
                     div.id = "TYPE_" + this.name + "_DIV"
                     div.setAttribute("grid-area", this.name)
                     div.className = "type_div"
+
+                    var top_div = document.createElement("div")
+                    top_div.className = "type_top_div"
+                    top_div.append(this.checkbox)
+
                     var name_p = document.createElement("p")
+                    name_p.className = "type_name_p"
                     name_p.innerText = this.name
-                    div.append(name_p)
-                    this.items.forEach((item)=>{div.append(item.make_div())})
-                    this.children.forEach((child)=>{div.append(child.make_div())})
+                    top_div.append(name_p)
+                    div.append(top_div)
+
+                    var bottom_div = document.createElement("div")
+                    bottom_div.className = "type_bottom_div"
+                    name_p.onclick = ()=>{
+                        if(bottom_div.hasAttribute("hidden")){
+                            bottom_div.removeAttribute("hidden")
+                        }
+                        else{
+                            bottom_div.setAttribute("hidden", "true")
+                        }
+                    }
+
+                    this.items.forEach((item)=>{bottom_div.append(item.make_div())})
+                    this.children.forEach((child)=>{bottom_div.append(child.make_div())})
+                    div.append(bottom_div)
                     return div
                 }
             }
@@ -296,7 +468,16 @@
                     this.name = name
                     this.set_type(type)
                     this.toBuy = toBuy
-                    this.allergen = allergen
+                    if(allergen){
+                        if(allergens[allergen]){
+                            this.allergen = allergens[allergen]
+                        }
+                        else{
+                            this.allergen = new Allergen(allergen)
+                        }
+                    }
+                    this.item_substitutes = []
+                    this.best_substitution = null
                     
                     this.available_input = document.createElement("input")
                     this.available_input.type = "checkbox"
@@ -304,48 +485,9 @@
                     this.available_input.id = "ITEM_AVAILABLE_" + this.name
                     this.available_input.checked = true
 
-                    this.preferred_input = document.createElement("input")
-                    this.preferred_input.type = "radio"
-                    this.preferred_input.className = "preference_radio"
-                    this.preferred_input.name = "ITEM_PREFERENCE_" + this.name
-                    this.preferred_input.id = "ITEM_PREFERENCE_" + this.name + "_PREFFERED"
-                    this.preferred_input.value = 1.5
-
-                    this.neutural_input = document.createElement("input")
-                    this.neutural_input.type = "radio"
-                    this.neutural_input.className = "preference_radio"
-                    this.neutural_input.name = "ITEM_PREFERENCE_" + this.name
-                    this.neutural_input.id = "ITEM_PREFERENCE_" + this.name + "_NEUTURAL"
-                    this.neutural_input.checked = true
-                    this.neutural_input.value = 1
-
-                    this.disliked_input = document.createElement("input")
-                    this.disliked_input.type = "radio"
-                    this.disliked_input.className = "preference_radio"
-                    this.disliked_input.name = "ITEM_PREFERENCE_" + this.name
-                    this.disliked_input.id = "ITEM_PREFERENCE_" + this.name + "_DISLIKED"
-                    this.disliked_input.value = 0.5
-
-                    this.exclude_input = document.createElement("input")
-                    this.exclude_input.type = "radio"
-                    this.exclude_input.className = "preference_radio"
-                    this.exclude_input.name = "ITEM_PREFERENCE_" + this.name
-                    this.exclude_input.id = "ITEM_PREFERENCE_" + this.name + "_EXPLUDE"
-                    this.exclude_input.value = 0
-
-                    this.preferred_div = document.createElement("div")
-                    this.preferred_div.id = "ITEM_PREFERENCE_DIV_" + this.name
-                    this.preferred_div.className = "preference_div"
-                    this.preferred_div.append(this.preferred_input)
-                    this.preferred_div.append(this.neutural_input)
-                    this.preferred_div.append(this.disliked_input)
-                    this.preferred_div.append(this.exclude_input)
+                    this.preference_div = get_preference_div("ITEM_PREFERENCE_" + this.name, [1.25, 1, 0.75, 0], 1)
 
                     this.available_input.onchange = ()=>{set_recepies_html(null)}
-                    this.preferred_input.onchange = ()=>{set_recepies_html(null)}
-                    this.neutural_input.onchange = ()=>{set_recepies_html(null)}
-                    this.disliked_input.onchange = ()=>{set_recepies_html(null)}
-                    this.exclude_input.onchange = ()=>{set_recepies_html(null)}
                 }
 
                 set_type(type){
@@ -370,17 +512,49 @@
                 }
 
                 get_prefence_multiplier(){
+                    if(this.allergen && this.allergen.is_excluded()){
+                        return 0
+                    }
                     return document.querySelector("input[name=\"ITEM_PREFERENCE_" + this.name + "\"]:checked").value
                 }
 
-                get_total_multiplier(){
+                get_item_to_substitute(prev_substitutes = []){
+                    if(this.item_substitutes.length==0){
+                        return null
+                    }
+                    var best_sub = this.item_substitutes[0]
+                    if(this.item_substitutes.length==1){
+                        if(!best_sub.to.get_available()){
+                            return null
+                        }
+                        return best_sub
+                    }
+                    this.item_substitutes.forEach((sub)=>{
+                        var new_sub = sub
+                        if((best_sub.get_total_multiplier(prev_substitutes))<(new_sub.get_total_multiplier(prev_substitutes))){
+                            best_sub = new_sub
+                        }
+                    })
+                    return best_sub
+                }
+
+                get_total_multiplier(prev_substitutes = []){
+                    if(this in prev_substitutes){
+                        return 0
+                    }
+                    prev_substitutes.push(this)
                     var result = this.get_prefence_multiplier()
                     if(!this.get_available()){
                         if(get_store_available()){
                             result *= this.get_toBuy()
                         }
-                        else{
-                            result = 0
+                        this.best_substitution = this.get_item_to_substitute(prev_substitutes)
+                        if(this.best_substitution){
+                            var prev_result = result
+                            result = Math.max(result, (this.best_substitution.get_total_multiplier([prev_substitutes])))
+                            if(result == prev_result){
+                                this.best_substitution = null
+                            }
                         }
                     }
                     return result
@@ -402,20 +576,90 @@
                     }
                     div.append(name_p)
 
-                    div.append(this.preferred_div)
+                    div.append(this.preference_div)
 
                     return div
+                }
+            }
+            class RecipeTag{
+                constructor(name){
+                    tags[name] = this
+                    this.name = name
+                }
+
+                get_prefence_multiplier(){
+                    return document.querySelector("input[name=\"RECIPE_TAG_PREFERENCE_" + this.name + "\"]:checked").value
+                }
+
+                make_div(){
+                    var div = document.createElement("div")
+                    div.className = "recipe_tag_div"
+
+                    var name_p = document.createElement("p")
+                    name_p.className = "recipe_tag_name_p"
+                    name_p.innerText = this.name
+                    div.append(name_p)
+                    div.append(get_preference_div("RECIPE_TAG_PREFERENCE_" + this.name, [1.2,1,0.8,0], 1))
+
+                    return div
+                }
+            }
+            class Allergen{
+                constructor(name){
+                    allergens[name] = this
+                    this.name = name
+
+                    this.checkbox = document.createElement("input")
+                    this.checkbox.type = "checkbox"
+                    this.checkbox.id = "ALLERGEN_CHECKBOX_"+this.name
+                    this.checkbox.onchange = ()=>{set_recepies_html(null)}
+                }
+
+                is_excluded(){
+                    return this.checkbox.checked
+                }
+
+                make_div(){
+                    var div = document.createElement("div")
+                    div.className = "allergy_div"
+
+                    var name_p = document.createElement("p")
+                    name_p.className = "allergy_name_p"
+                    name_p.innerText = this.name
+                    div.append(name_p)
+                    div.append(this.checkbox)
+
+                    return div
+                }
+
+                toString(){
+                    return this.name
+                }
+            }
+            class Substitute{
+                constructor(from, to, ranking){
+                    this.from = from
+                    from.item_substitutes.push(this)
+                    this.to = to
+                    this.ranking = ranking
+                }
+
+                get_total_multiplier(prev_substitutes = []){
+                    return this.ranking*this.to.get_total_multiplier(prev_substitutes)
                 }
             }
         </script>
     </head>
     <body onload="on_load()">
+        <label style="font-size: large;">Store available
         <input type="checkbox" id="store_available" checked onchange="set_recepies_html(null)">
-        <div id="items">
-
-        </div>
-        <div id="recipes">
-
+        </label>
+        <div class="container">
+            <div class="selections">
+                <div id="items"></div>
+                <div id="other"></div>
+            </div>
+            <div id="recipes"></div>
         </div>
     </body>
 </html>

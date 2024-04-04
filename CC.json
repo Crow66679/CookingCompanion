@@ -162,6 +162,12 @@
             "allergen": null
         },
         {
+            "name": "Lemon",
+            "type": "Fruit",
+            "tobuy_rank_multiplyer": null,
+            "allergen": null
+        },
+        {
             "name": "Ginger",
             "type": "Vegetable",
             "tobuy_rank_multiplyer": null,
@@ -369,13 +375,6 @@
         },
         {
             "recipe": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
-            "item": "Penne",
-            "missing_rank_multiplier": 0.9,
-            "amount": 1,
-            "measurement": ""
-        },
-        {
-            "recipe": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
             "item": "Rice Cooker",
             "missing_rank_multiplier": 0.2,
             "amount": 1,
@@ -410,8 +409,16 @@
             "tag": "Vegetarian"
         },
         {
+            "recipe": "Penne mit Basilikumso\u00dfe",
+            "tag": "Simple"
+        },
+        {
             "recipe": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
             "tag": "Vegetarian"
+        },
+        {
+            "recipe": "Stir Fry! Pfannengem\u00fcse mit Erdnuss-Chili-So\u00dfe",
+            "tag": "Fast"
         }
     ],
     "Step": [
@@ -496,7 +503,7 @@
         {
             "to_substitue": "Rice Cooker",
             "with_substitute": "Small Pot",
-            "ranking": 0.99
+            "ranking": 0.97
         },
         {
             "to_substitue": "Rice Cooker",
@@ -512,6 +519,16 @@
             "to_substitue": "Big Pot",
             "with_substitute": "Small Pot",
             "ranking": 0.3
+        },
+        {
+            "to_substitue": "Lime",
+            "with_substitute": "Lemon",
+            "ranking": 0.95
+        },
+        {
+            "to_substitue": "Lemon",
+            "with_substitute": "Lime",
+            "ranking": 0.95
         }
     ],
     "Tag": [
@@ -543,7 +560,7 @@
         {
             "name": "Implement",
             "parent": null,
-            "tobuy_rank_multiplier": 0
+            "tobuy_rank_multiplier": 0.2
         },
         {
             "name": "Pot",
@@ -588,7 +605,7 @@
         {
             "name": "Fruit",
             "parent": "Perishable",
-            "tobuy_rank_multiplier": null
+            "tobuy_rank_multiplier": 0.8
         },
         {
             "name": "Beans",

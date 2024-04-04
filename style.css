@@ -1,62 +1,111 @@
 body{
-    background-color: green;
+    background-color: black;
+    color: #FFFFFF;
+}
+
+.selections{
+    display: flex;
 }
 
 div{
-    background-color: #BADA5588;
-    border: solid 1px #11FF2288;
+    height: fit-content;
+    background-color: #BADA550A;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
 }
 
 .item_div{
     display: grid;
     grid-template-columns: 30px auto 100px;
+    grid-template-rows: min-content;
     grid-template-areas: 
         'available item_name preference_div';
-    margin-left: 5px;
-    padding: 1px;
+}
+
+.type_bottom_div{
+    border-radius: 5px;
+    border-bottom: solid black 1px;
 }
 
 .available{
     grid-area: available;
-    border: solid 2px red;
 }
 
 .item_name{
     grid-area: item_name;
-    border: solid 2px #F42069;
 }
 
 .preference_div{
+    width: 100px;
     grid-area: preference_div;
-    border: solid 2px blue;
+}
+
+label > input{
+    display: none;
+}
+
+label > input + img{
+    height: 25px;
+    width: 25px;
+    cursor: pointer;
+    opacity: 0.2;
+}
+
+label > input:checked + img{
+    opacity: 1;
 }
 
 #items{
-    display: grid;
+    display: flex;
     grid-template-columns: 50% auto;
-    grid-template-areas: 
-        'ingredient implement';
 }
 
 .type_div{
-    padding: 1px;
-    margin-left: 10px;
+    display: grid;
+    padding-left: 5px;
+    border-left: black solid 1px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.type_top_div{
+    display: grid;
+    grid-template-columns: min-content auto;
+    grid-template-areas: 
+        'checkbox name';
+}
+
+.item_type_checkbox{
+    grid-area: checkbox;
+}
+
+.type_name_p{
+    grid-area: name;
+}
+
+.type_name_p:hover{
+    background-color: #AAAAAAAA;
 }
 
 .recipe_overview_div{
     border: solid 2px black;
     display: grid;
-    grid-template-columns: 80% auto;
+    grid-template-columns: 60% 30% auto;
     grid-template-areas: 
-        'recipe_name recipe_rating';
+        'recipe_name recipe_tags recipe_rating';
 }
 
 .recipe_overview_div:hover{
-    background-color: #AAAAAA;
+    background-color: #AAAAAAAA;
 }
 
 .recipe_name{
     grid-area: recipe_name;
+}
+
+.recipe_tags{
+    grid-area: recipe_tags;
 }
 
 .recipe_rating{
@@ -65,17 +114,13 @@ div{
 
 .recipe_item_div{
     display: grid;
-    grid-template-columns: min-content min-content auto auto;
+    grid-template-columns: 15% 50% auto;
     grid-template-areas: 
-        'item_amount item_measurement item_name item_extra';
+        'item_amount item_name item_extra';
 }
 
 .recipe_item_amount{
     grid-area: item_amount;
-}
-
-.recipe_item_measurment{
-    grid-area: item_measurement;
 }
 
 .recipe_item_name{
@@ -85,4 +130,51 @@ div{
 
 .recipe_item_extra{
     grid-area: item_extra;
+}
+
+.recipe_details_div{
+    display: none;
+    grid-template-columns: 25% 75%;
+    grid-template-areas: 
+        'ingredients steps';
+}
+
+.recipe_ingredients_div{
+    grid-area: ingredients;
+}
+
+.recipe_steps_div{
+    grid-area: steps;
+}
+
+.step_text_p{
+    text-wrap: wrap;
+}
+
+.recipe_tag_div{
+    display: grid;
+    grid-template-columns: auto min-content;
+    grid-template-rows: min-content;
+    grid-template-areas: 
+        'tag_name preference_div';
+}
+
+.recipe_tag_name_p{
+    grid-area: tag_name;
+}
+
+.allergy_div{
+    display: flex;
+}
+
+.other_selecion{
+    margin-left: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.step_div, .recipe_item_div{
+    border-bottom-right-radius: 20px;
+    border-bottom: 1px solid #00000088;
+    border-left: 1px solid #00000088;
 }
