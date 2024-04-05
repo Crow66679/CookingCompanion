@@ -50,7 +50,7 @@
                 types = {}
                 types_json = load_json_to_dict("Type", "name", json)
                 Object.keys(types_json).forEach((key)=>{
-                    types[key] = new ItemType(types_json[key].name, types_json[key].parent, types_json[key].tobuy_rank_multiplier)
+                    types[key] = new ItemType(types_json[key].name, types_json[key].parent, types_json[key].tobuy_rank_multiplier, types_json[key].hidden)
                 })
                 Object.keys(types).forEach((key)=>{
                     if ("string" == typeof types[key].parent) {
@@ -116,7 +116,7 @@
                 load_items(json)
                 items_div = document.getElementById("items")
                 Object.values(types).forEach((type) => {
-                    if(type.parent == null){
+                    if(type.parent == null || (type.parent.hidden && !type.hidden)){
                         document.getElementById("items").append(type.make_div())
                     }
                 })
@@ -153,15 +153,20 @@
                 if(json){
                     load_recipes(json)
                 }
+                var recipe_container = document.getElementById("recipes")
                 if(recipies){
                     recipies.sort(function compare(a,b){return b.get_rating()-a.get_rating()})
-                    var recipe_container = document.getElementById("recipes")
                     recipe_container.innerHTML = ""
                     recipies.forEach((r)=>{
                         if(r.get_rating() > 0.1){
                             recipe_container.append(r.make_div())
                         }
                     })
+                }
+                if(recipe_container.childNodes.length == 0){
+                    var nope = document.createElement("p")
+                    nope.innerText = "no fitting recepies found!"
+                    recipe_container.append(nope)
                 }
             }
             function load_json_to_dict(obj_name, id, json){
@@ -380,10 +385,11 @@
                 }
             }
             class ItemType{
-                constructor(name, parent, toBuy){
+                constructor(name, parent, toBuy, hidden){
                     this.name = name
                     this.set_parent(parent)
                     this.toBuy = toBuy
+                    this.hidden = hidden
                     this.children = []
                     this.items = []
                     this.checkbox = document.createElement("input")
@@ -457,8 +463,15 @@
                     }
 
                     this.items.forEach((item)=>{bottom_div.append(item.make_div())})
-                    this.children.forEach((child)=>{bottom_div.append(child.make_div())})
+                    this.children.forEach((child)=>{
+                        if(this.hidden==child.hidden){
+                            bottom_div.append(child.make_div())
+                        }
+                    })
                     div.append(bottom_div)
+                    if(bottom_div.childNodes.length == 0){
+                        div.setAttribute("hidden", true)
+                    }
                     return div
                 }
             }
@@ -481,7 +494,7 @@
                     
                     this.available_input = document.createElement("input")
                     this.available_input.type = "checkbox"
-                    this.available_input.className = "available"
+                    this.available_input.className = "available_input"
                     this.available_input.id = "ITEM_AVAILABLE_" + this.name
                     this.available_input.checked = true
 
@@ -545,6 +558,7 @@
                     prev_substitutes.push(this)
                     var result = this.get_prefence_multiplier()
                     if(!this.get_available()){
+                        console.log(this.name + " not available")
                         if(get_store_available()){
                             result *= this.get_toBuy()
                         }
@@ -555,6 +569,9 @@
                             if(result == prev_result){
                                 this.best_substitution = null
                             }
+                        }
+                        if(!get_store_available() && !this.best_substitution){
+                            return 0
                         }
                     }
                     return result

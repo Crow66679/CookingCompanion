@@ -555,7 +555,8 @@
         {
             "name": "Ingredient",
             "parent": null,
-            "tobuy_rank_multiplier": 0.75
+            "tobuy_rank_multiplier": 0.75,
+            "hidden": true
         },
         {
             "name": "Implement",
@@ -595,7 +596,8 @@
         {
             "name": "Perishable",
             "parent": "Ingredient",
-            "tobuy_rank_multiplier": 0.6
+            "tobuy_rank_multiplier": 0.6,
+            "hidden": true
         },
         {
             "name": "Vegetable",

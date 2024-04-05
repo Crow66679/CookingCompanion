@@ -17,7 +17,7 @@ div{
 
 .item_div{
     display: grid;
-    grid-template-columns: 30px auto 100px;
+    grid-template-columns: 30px 200px 100px;
     grid-template-rows: min-content;
     grid-template-areas: 
         'available item_name preference_div';
@@ -39,6 +39,12 @@ div{
 .preference_div{
     width: 100px;
     grid-area: preference_div;
+    background: none;
+    padding-top: 10px;
+}
+
+input{
+    cursor: pointer;
 }
 
 label > input{
@@ -48,7 +54,6 @@ label > input{
 label > input + img{
     height: 25px;
     width: 25px;
-    cursor: pointer;
     opacity: 0.2;
 }
 
@@ -56,13 +61,16 @@ label > input:checked + img{
     opacity: 1;
 }
 
+#store_available{
+    display: inline;
+}
+
 #items{
-    display: flex;
-    grid-template-columns: 50% auto;
+    display: block;
 }
 
 .type_div{
-    display: grid;
+    width: 200px;
     padding-left: 5px;
     border-left: black solid 1px;
     border-top-left-radius: 10px;
@@ -86,6 +94,7 @@ label > input:checked + img{
 
 .type_name_p:hover{
     background-color: #AAAAAAAA;
+    cursor: pointer;
 }
 
 .recipe_overview_div{
@@ -98,6 +107,7 @@ label > input:checked + img{
 
 .recipe_overview_div:hover{
     background-color: #AAAAAAAA;
+    cursor: pointer;
 }
 
 .recipe_name{
