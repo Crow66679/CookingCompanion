@@ -17,7 +17,7 @@ div{
 
 .item_div{
     display: grid;
-    grid-template-columns: 30px 200px 100px;
+    grid-template-columns: 20px auto 100px;
     grid-template-rows: min-content;
     grid-template-areas: 
         'available item_name preference_div';
@@ -65,12 +65,16 @@ label > input:checked + img{
     display: inline;
 }
 
+.selections{
+    display: inline-block;
+}
+
 #items{
-    display: block;
+    display: contents;
 }
 
 .type_div{
-    width: 200px;
+    width: 360px;
     padding-left: 5px;
     border-left: black solid 1px;
     border-top-left-radius: 10px;

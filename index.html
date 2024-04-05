@@ -395,7 +395,6 @@
                     this.checkbox = document.createElement("input")
                     this.checkbox.type = "checkbox"
                     this.checkbox.className = "item_type_checkbox"
-                    this.checkbox.checked = true
                     this.checkbox.onchange = ()=>{
                         this.set_available(this.checkbox.checked)
                         set_recepies_html(null)
@@ -439,7 +438,8 @@
                     var div = document.createElement("div")
                     div.id = "TYPE_" + this.name + "_DIV"
                     div.setAttribute("grid-area", this.name)
-                    div.className = "type_div"
+                    if(!this.parent || this.parent.hidden)
+                    {div.className = "type_div"}
 
                     var top_div = document.createElement("div")
                     top_div.className = "type_top_div"
@@ -496,7 +496,6 @@
                     this.available_input.type = "checkbox"
                     this.available_input.className = "available_input"
                     this.available_input.id = "ITEM_AVAILABLE_" + this.name
-                    this.available_input.checked = true
 
                     this.preference_div = get_preference_div("ITEM_PREFERENCE_" + this.name, [1.25, 1, 0.75, 0], 1)
 
@@ -558,7 +557,6 @@
                     prev_substitutes.push(this)
                     var result = this.get_prefence_multiplier()
                     if(!this.get_available()){
-                        console.log(this.name + " not available")
                         if(get_store_available()){
                             result *= this.get_toBuy()
                         }
